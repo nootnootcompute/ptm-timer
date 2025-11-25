@@ -13,8 +13,8 @@
       --bg-main: #020617;
       --bg-card: #0f172a;
       --bg-card-soft: #111827;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.15);
+      --accent: #db00b7;
+      --accent-soft: rgba(165, 0, 138, 0.15);
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
       --danger: #f97316;
@@ -24,11 +24,16 @@
       --bg-main: #f9fafb;
       --bg-card: #f3f4f6;
       --bg-card-soft: #ececf1;
-      --accent: #0284c7;
-      --accent-soft: rgba(2, 132, 199, 0.15);
+      --accent: #db00b7;
+      --accent-soft: rgba(165, 0, 138, 0.15);
       --text-main: #0f172a;
       --text-muted: #6b7280;
       --danger: #f97316;
+    }
+
+    /* responsive root font size so rem-based spacing scales with zoom / viewport */
+    html {
+      font-size: clamp(15px, 1.6vw, 18px);
     }
 
     * {
@@ -39,7 +44,7 @@
       margin: 0;
       font-family: "Red Hat Text", sans-serif;
       font-optical-sizing: auto;
-      font-weight: <weight>;
+      font-weight: 400;
       font-style: normal;
       background: radial-gradient(circle at top, #0b1120, #020617);
       color: var(--text-main);
@@ -82,7 +87,7 @@
 
     .wrapper {
       width: 100%;
-      max-width: 960px;
+      max-width: clamp(960px, 85vw, 1200px);
       padding: 1.5rem;
     }
 
@@ -92,6 +97,16 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
       padding: 1.75rem 2rem 2rem;
       border: 1px solid rgba(148, 163, 184, 0.35);
+      /* never exceed viewport height minus page padding; allow inner scrolling */
+      max-height: calc(100vh - 3rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow: hidden; /* keep outer card clipped, inner area will scroll */
+    }
+
+    .card.maximized .accent {
+      display: none;
     }
 
     html.light-mode .card {
@@ -103,20 +118,25 @@
       font-size: 1.6rem;
       letter-spacing: 0.04em;
       display: flex;
-      align-items: baseline;
+      align-items: center; /* vertically center header contents */
       justify-content: space-between;
       gap: 0.5rem;
+      /* make the header occupy a consistent vertical area so the title/button sit centered
+         between the top of the card and the panels below */
+      height: clamp(3.2rem, 6vh, 4.8rem);
+      padding-top: 0.15rem;
+      padding-bottom: 0.15rem;
     }
-
+    
     header h1 {
       margin: 0;
       font-size: 1.6rem;
       letter-spacing: 0.04em;
       display: flex;
-      align-items: baseline;
+      align-items: center; /* keep title & accent aligned vertically */
       gap: 0.5rem;
     }
-
+    
     header h1 span.accent {
       font-size: 0.9rem;
       font-weight: 500;
@@ -144,6 +164,7 @@
       border-radius: 0.6rem;
       cursor: pointer;
       font-size: 0.8rem;
+      font-family: "Red Hat Text", sans-serif;
     }
     .toggle-btn:hover {
       color: var(--text-main);
@@ -156,9 +177,14 @@
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.5fr);
       gap: 1.5rem;
-      margin-top: 1.5rem;
+      /* reduce the separate top margin so the header height defines the space */
+      margin-top: 0.75rem;
+      /* allow layout to grow and scroll inside the clipped card */
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
     }
 
     @media (max-width: 800px) {
@@ -174,6 +200,11 @@
       border-radius: 1.25rem;
       padding: 1.25rem 1.4rem;
       border: 1px solid rgba(148, 163, 184, 0.35);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: auto; /* ensure each panel can scroll if its content is taller */
     }
 
     html.light-mode .panel {
@@ -187,12 +218,14 @@
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--text-muted);
-      margin-bottom: 0.9rem;
+      margin-bottom: 1.25rem; /* rem-based, scales with root font-size */
     }
 
     form {
-      display: grid;
-      gap: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
     }
 
     .field {
@@ -208,6 +241,10 @@
 
     .field-row .field {
       flex: 1;
+    }
+
+    .field-row + .hint {
+      margin-top: -0.5rem;
     }
 
     label {
@@ -250,30 +287,46 @@
       border-color: var(--accent);
     }
 
+    /* allow panels to participate in flex sizing properly */
+    .panel {
+      min-height: 0;
+    }
+
+    /* use rem for consistent hint spacing and allow final-hint to sit at bottom */
     .hint {
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       color: var(--text-muted);
       font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .hint.hint--bottom {
+      margin-top: 1.25rem;
+      text-align: center;
     }
 
     .buttons {
       display: flex;
       gap: 0.5rem;
       margin-top: 0.2rem;
+      font-family: "Red Hat Text", sans-serif;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     button {
       appearance: none;
       border: none;
       border-radius: 999px;
-      padding: 0.45rem 0.9rem;
-      font-size: 0.85rem;
-      font-weight: 500;
+      padding: 0.65rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.3rem;
+      min-width: 140px;
     }
 
     button:disabled {
@@ -285,12 +338,14 @@
       background: linear-gradient(135deg, #0ea5e9, #22c55e);
       color: #0b1120;
       box-shadow: 0 12px 30px rgba(34, 197, 94, 0.35);
+      font-family: "Red Hat Text", sans-serif;
     }
 
     .btn-secondary {
       background: rgba(15, 23, 42, 0.9);
       color: var(--text-muted);
       border: 1px solid rgba(148, 163, 184, 0.5);
+      font-family: "Red Hat Text", sans-serif;
     }
 
     html.light-mode .btn-secondary {
@@ -322,7 +377,6 @@
       font-weight: bold;
       color: var(--text-muted);
       margin-bottom: 1rem;
-      text-transform: capitalize;
     }
 
     .status-grid {
@@ -433,14 +487,71 @@
     .layout.config-hidden .panel:last-child {
       padding-left: 2rem;
       padding-right: 2rem;
+      padding-top: 1.25rem;    /* reduced from 2.5rem */
+      padding-bottom: 2rem;   /* extra space below status area */
+      min-height: calc(60vh - 4rem); /* keep right panel tall relative to card */
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 1.25rem;
     }
     /* Make the main clock larger in the maximised view */
     .layout.config-hidden .live-clock {
-      font-size: 4.8rem;
+      /* responsive, large clock when configuration hidden */
+      font-size: clamp(4.8rem, 9vw, 8rem);
+      line-height: 1;
+      font-weight: 700;
+      margin-bottom: 0.8rem; /* separate clock from the status tiles */
     }
     /* Slightly reduce the card padding so the display uses more space */
     .layout.config-hidden .card {
+      /* harmless fallback if selector matches later; primary sizing handled via .card.maximized below */
       padding: 1rem 1.25rem 1.25rem;
+    }
+
+    /* Expand wrapper/card when maximised so the clock can grow wider */
+    .wrapper.maximized {
+      max-width: none;
+      width: calc(100% - 3rem);
+    }
+
+    /* When maximised, make the card occupy most of the viewport but leave room at the bottom
+       for the theme toggle and attribution (adjust bottom reserve as needed). */
+    .card.maximized {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      right: 1.5rem;
+      bottom: 6.25rem; /* reserve ~6.25rem at bottom for slider + attribution */
+      margin: 0;
+      z-index: 60;
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.45);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ensure the layout fills the maximised card and its panels can scroll internally */
+    .card.maximized .layout {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .card.maximized .panel {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+    }
+
+    /* larger clock in maximised card (keeps responsive clamp) */
+    .card.maximized .live-clock {
+      font-size: clamp(5.5rem, 11vw, 11rem);
+      line-height: 1;
+      font-weight: 800;
     }
 
     /* Theme toggle switch */
@@ -547,6 +658,34 @@
         gap: 0.35rem;
       }
     }
+
+    /* ensure right-panel clock/date block is vertically centred when config is visible */
+    .layout:not(.config-hidden) .panel:last-child {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .layout:not(.config-hidden) .panel:last-child .clock-block {
+      margin-top: auto;
+      margin-bottom: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      width: 100%;
+    }
+
+    /* when maximised, preserve the earlier spacing rules (override the margins) */
+    .layout.config-hidden .panel:last-child .clock-block {
+      margin-top: 0;
+      margin-bottom: 0;
+      align-items: center;
+    }
+
+    .card.maximized header,
+    .layout.config-hidden header {
+      height: clamp(3rem, 4.8vh, 4rem);
+    }
   </style>
 </head>
 <body>
@@ -555,12 +694,12 @@
       <header>
         <h1>
           PTM Slot Timer
-          <span class="accent">Every 'N' minutes between two times</span>
+          <span style="font-size: 40%;" class="accent">Every 'N' minutes between two times</span>
         </h1>
 
         <!-- Toggle button to hide/show the configuration panel -->
         <div>
-          <button id="toggleConfigBtn" class="toggle-btn" type="button">Hide configuration</button>
+          <button id="toggleConfigBtn" class="toggle-btn" type="button">Hide Configuration</button>
         </div>
       </header>
 
@@ -568,7 +707,7 @@
         <!-- Left: configuration -->
         <section class="panel">
           <div class="panel-title">Config</div>
-          <form id="configForm">
+           <form id="configForm">
             <div class="field-row">
               <div class="field">
                 <label for="startTime">PTM Start</label>
@@ -582,6 +721,7 @@
             <div class="hint">
                   This should be the start & end of your Parents Evening.
                 </div>
+
 
             <div class="field-row">
               <div class="field">
@@ -602,17 +742,17 @@
 
             <div class="buttons">
               <button type="submit" class="btn-primary" id="startButton">
-                ▶ Start schedule
+                ▶ Start Schedule
               </button>
               <button type="button" class="btn-secondary" id="stopButton" disabled>
-                ■ Stop or reset
+                ■ Stop/Reset
               </button>
             </div>
 
-            <div class="hint">
-              The schedule uses <strong>today's date</strong>. If all your times are already in the past,
-              it will ask you to pick later times.
-            </div>
+            <div class="hint hint--bottom">
+               The schedule uses <strong>today's date</strong>. If all your times are already in the past,
+               it will ask you to pick later times.
+             </div>
           </form>
         </section>
 
@@ -620,9 +760,11 @@
         <section class="panel">
           <div class="panel-title">Display</div>
 
-          <div class="live-clock" id="liveClock">--:--:--</div>
-          <div class="live-label">Current local time</div>
-          <div class="live-date" id="liveDate">-</div>
+          <div class="clock-block">
+            <div class="live-clock" id="liveClock">--:--:--</div>
+            <div class="live-label">Current local time</div>
+            <div class="live-date" id="liveDate">-</div>
+          </div>
 
           <div class="status-grid">
             <div class="status-tile">
@@ -659,8 +801,8 @@
 
   <!-- Footer attribution -->
   <div class="footer">
-    <span>Made by Mr Nat - 2025</span>
-    <span class="pixel-heart"></span>
+    <span>Programmed by <b>Mr Nat</b> - 2025</span>
+    <span style="font-size: 20px;">🐧</span>
   </div>
 
   <script>
@@ -734,15 +876,15 @@
 
     // Toggle the visibility of the configuration panel and maximise display
     function toggleConfig() {
+      // toggle the layout class and also add/remove .maximized on the main card
       const hidden = layoutEl.classList.toggle("config-hidden");
       toggleConfigBtn.textContent = hidden ? "Show configuration" : "Hide configuration";
-      // keep focus on main controls when hiding so keyboard can continue to work
-      if (hidden) {
-        // optional: focus the start button when config is hidden
-        startButton.focus();
-      }
+      const cardEl = document.getElementById("mainCard");
+      if (cardEl) cardEl.classList.toggle("maximized", hidden);
+      // keep keyboard focus usable when config is hidden
+      if (hidden && startButton) startButton.focus();
     }
-
+    
     toggleConfigBtn.addEventListener("click", toggleConfig);
 
     function buildSchedule() {
@@ -1019,7 +1161,7 @@
       // Update the live label to include timezone
       document.querySelector('.live-label').textContent = `Current local time (${timezoneName})`;
 
-      // Format: "Tuesday 25th November 2025"
+      // Format: "Monday 1st January 2025"
       const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
       const dateStr = now.toLocaleDateString('en-GB', options);
       // Add ordinal suffix (st, nd, rd, th)
