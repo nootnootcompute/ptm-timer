@@ -17,6 +17,17 @@
       --danger: #f97316;
     }
 
+    html.light-mode {
+      --bg-main: #f9fafb;
+      --bg-card: #f3f4f6;
+      --bg-card-soft: #ececf1;
+      --accent: #0284c7;
+      --accent-soft: rgba(2, 132, 199, 0.15);
+      --text-main: #0f172a;
+      --text-muted: #6b7280;
+      --danger: #f97316;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -30,6 +41,11 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      position: relative;
+    }
+
+    html.light-mode body {
+      background: radial-gradient(circle at top, #e5e7eb, #f9fafb);
     }
 
     body.flash {
@@ -45,6 +61,19 @@
       }
     }
 
+    html.light-mode body.flash {
+      animation: flash-bg-light 0.2s ease-in-out alternate 8;
+    }
+
+    @keyframes flash-bg-light {
+      0% {
+        background-color: #f9fafb;
+      }
+      100% {
+        background-color: #fecaca;
+      }
+    }
+
     .wrapper {
       width: 100%;
       max-width: 960px;
@@ -57,6 +86,10 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
       padding: 1.75rem 2rem 2rem;
       border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    html.light-mode .card {
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
     }
 
     header {
@@ -111,6 +144,10 @@
       background: rgba(255,255,255,0.02);
     }
 
+    html.light-mode .toggle-btn:hover {
+      background: rgba(0,0,0,0.02);
+    }
+
     .layout {
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
@@ -131,6 +168,12 @@
       border-radius: 1.25rem;
       padding: 1.25rem 1.4rem;
       border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    html.light-mode .panel {
+      background: radial-gradient(circle at top left, rgba(2, 132, 199, 0.05), transparent 60%),
+                  radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.05), transparent 55%),
+                  rgba(243, 244, 246, 0.95);
     }
 
     .panel-title {
@@ -177,6 +220,12 @@
       background: rgba(15, 23, 42, 0.96);
       color: var(--text-main);
       font-size: 0.95rem;
+    }
+
+    html.light-mode input[type="time"],
+    html.light-mode input[type="number"] {
+      background: rgba(255, 255, 255, 0.96);
+      border-color: rgba(15, 23, 42, 0.2);
     }
 
     input[type="number"]::-webkit-outer-spin-button,
@@ -237,6 +286,11 @@
       border: 1px solid rgba(148, 163, 184, 0.5);
     }
 
+    html.light-mode .btn-secondary {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: rgba(15, 23, 42, 0.2);
+    }
+
     .live-clock {
       font-variant-numeric: tabular-nums;
       font-size: 3.2rem;
@@ -273,6 +327,11 @@
       border-radius: 0.9rem;
       padding: 0.6rem 0.7rem;
       border: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    html.light-mode .status-tile {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(15, 23, 42, 0.1);
     }
 
     .status-label {
@@ -313,16 +372,28 @@
       border: 1px solid rgba(148, 163, 184, 0.7);
     }
 
+    html.light-mode .status-tag.idle {
+      color: #1f2937;
+    }
+
     .status-tag.finished {
       background: rgba(56, 189, 248, 0.15);
       color: #7dd3fc;
       border: 1px solid rgba(56, 189, 248, 0.7);
     }
 
+    html.light-mode .status-tag.finished {
+      color: #0c4a6e;
+    }
+
     .status-tag.error {
       background: rgba(248, 113, 113, 0.12);
       color: #fecaca;
       border: 1px solid rgba(248, 113, 113, 0.9);
+    }
+
+    html.light-mode .status-tag.error {
+      color: #7f1d1d;
     }
 
     .mini {
@@ -354,6 +425,111 @@
     /* Slightly reduce the card padding so the display uses more space */
     .layout.config-hidden .card {
       padding: 1rem 1.25rem 1.25rem;
+    }
+
+    /* Theme toggle switch */
+    .theme-toggle-container {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .toggle-switch {
+      appearance: none;
+      width: 2.5rem;
+      height: 1.4rem;
+      border-radius: 999px;
+      border: none;
+      background: rgba(148, 163, 184, 0.3);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .toggle-switch::before {
+      content: '';
+      position: absolute;
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 999px;
+      background: var(--text-main);
+      top: 50%;
+      left: 0.15rem;
+      transform: translateY(-50%);
+      transition: left 0.3s ease;
+    }
+
+    .toggle-switch:checked {
+      background: var(--accent);
+    }
+
+    .toggle-switch:checked::before {
+      left: calc(100% - 1.25rem);
+    }
+
+    @media (max-width: 640px) {
+      .theme-toggle-container {
+        bottom: 1rem;
+        left: 1rem;
+        font-size: 0.75rem;
+        gap: 0.5rem;
+      }
+
+      .toggle-switch {
+        width: 2.2rem;
+        height: 1.2rem;
+      }
+
+      .toggle-switch::before {
+        width: 0.95rem;
+        height: 0.95rem;
+      }
+
+      .toggle-switch:checked::before {
+        left: calc(100% - 1.1rem);
+      }
+    }
+
+    /* Footer attribution */
+    .footer {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer:hover {
+      opacity: 1;
+    }
+
+    .pixel-heart {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="2" width="1" height="1" fill="%23ff69b4"/><rect x="2" y="1" width="1" height="1" fill="%23ff69b4"/><rect x="3" y="1" width="1" height="1" fill="%23ff69b4"/><rect x="4" y="2" width="1" height="1" fill="%23ff69b4"/><rect x="2" y="2" width="1" height="1" fill="%23ff1493"/><rect x="3" y="2" width="1" height="1" fill="%23ff1493"/><rect x="1" y="3" width="1" height="1" fill="%23ff1493"/><rect x="2" y="3" width="1" height="1" fill="%23ff1493"/><rect x="3" y="3" width="1" height="1" fill="%23ff1493"/><rect x="4" y="3" width="1" height="1" fill="%23ff1493"/><rect x="2" y="4" width="1" height="1" fill="%23ff1493"/><rect x="3" y="4" width="1" height="1" fill="%23ff1493"/><rect x="2" y="5" width="1" height="1" fill="%23ff1493"/><rect x="3" y="5" width="1" height="1" fill="%23ff1493"/><rect x="2" y="6" width="1" height="1" fill="%23ff69b4"/><rect x="3" y="6" width="1" height="1" fill="%23ff69b4"/></svg>');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    @media (max-width: 640px) {
+      .footer {
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 0.65rem;
+        gap: 0.35rem;
+      }
     }
   </style>
 </head>
@@ -454,7 +630,51 @@
     </div>
   </div>
 
+  <!-- Theme toggle switch -->
+  <div class="theme-toggle-container">
+    <span>🌙</span>
+    <input type="checkbox" id="themeToggle" class="toggle-switch" />
+    <span>☀️</span>
+  </div>
+
+  <!-- Footer attribution -->
+  <div class="footer">
+    <span>Made by Mr Nat - 2025</span>
+    <span class="pixel-heart"></span>
+  </div>
+
   <script>
+    // Theme toggle
+    const themeToggle = document.getElementById("themeToggle");
+    const htmlElement = document.documentElement;
+
+    // Load theme preference from localStorage
+    function initTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const isLightMode = savedTheme ? savedTheme === "light" : !prefersDark;
+
+      if (isLightMode) {
+        htmlElement.classList.add("light-mode");
+        themeToggle.checked = true;
+      } else {
+        htmlElement.classList.remove("light-mode");
+        themeToggle.checked = false;
+      }
+    }
+
+    themeToggle.addEventListener("change", () => {
+      if (themeToggle.checked) {
+        htmlElement.classList.add("light-mode");
+        localStorage.setItem("theme", "light");
+      } else {
+        htmlElement.classList.remove("light-mode");
+        localStorage.setItem("theme", "dark");
+      }
+    });
+
+    initTheme();
+
     // State
     let schedule = [];
     let nextIndex = 0;
@@ -793,12 +1013,18 @@
         return;
       }
 
-      const totalSeconds = Math.round(diffMs / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
 
-      countdownEl.textContent =
-        String(minutes) + ":" + String(seconds).padStart(2, "0");
+
+
+
+
+
+
+
+
+
+
+</html></body>  </script>    setInterval(tick, 1000);    }      countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;      const seconds = totalSeconds % 60;      const minutes = Math.floor(totalSeconds / 60);      const totalSeconds = Math.round(diffMs / 1000);        String(minutes) + ":" + String(seconds).padStart(2, "0");
     }
 
     // Wire up events
