@@ -1012,28 +1012,3 @@
         }
         return;
       }
-
-
-
-
-
-
-
-
-
-
-
-
-</html></body>  </script>    setInterval(tick, 1000);    }      countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;      const seconds = totalSeconds % 60;      const minutes = Math.floor(totalSeconds / 60);      const totalSeconds = Math.round(diffMs / 1000);        String(minutes) + ":" + String(seconds).padStart(2, "0");
-    }
-
-    // Wire up events
-    document.getElementById("configForm").addEventListener("submit", startSchedule);
-    document.getElementById("stopButton").addEventListener("click", stopSchedule);
-
-    // Main clock and timer loop
-    setStatus("idle", "Idle");
-    setInterval(tick, 250);
-  </script>
-</body>
-</html>
