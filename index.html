@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>PTM Timer</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>⏱️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -33,7 +37,10 @@
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Red Hat Text", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: <weight>;
+      font-style: normal;
       background: radial-gradient(circle at top, #0b1120, #020617);
       color: var(--text-main);
       display: flex;
@@ -246,6 +253,7 @@
     .hint {
       font-size: 0.75rem;
       color: var(--text-muted);
+      font-style: italic;
     }
 
     .buttons {
@@ -306,6 +314,15 @@
       text-transform: uppercase;
       letter-spacing: 0.16em;
       margin-bottom: 1rem;
+    }
+
+    .live-date {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      text-transform: capitalize;
     }
 
     .status-grid {
@@ -537,8 +554,8 @@
     <div class="card" id="mainCard">
       <header>
         <h1>
-          Parents Evening Slot Timer
-          <span class="accent">Every N minutes between two times</span>
+          PTM Slot Timer
+          <span class="accent">Every 'N' minutes between two times</span>
         </h1>
 
         <!-- Toggle button to hide/show the configuration panel -->
@@ -550,18 +567,21 @@
       <div class="layout">
         <!-- Left: configuration -->
         <section class="panel">
-          <div class="panel-title">Configuration</div>
+          <div class="panel-title">Config</div>
           <form id="configForm">
             <div class="field-row">
               <div class="field">
-                <label for="startTime">Start time</label>
+                <label for="startTime">PTM Start</label>
                 <input type="time" id="startTime" required value="16:00" />
               </div>
               <div class="field">
-                <label for="endTime">End time</label>
+                <label for="endTime">PTM End</label>
                 <input type="time" id="endTime" required value="18:00" />
               </div>
             </div>
+            <div class="hint">
+                  This should be the start & end of your Parents Evening.
+                </div>
 
             <div class="field-row">
               <div class="field">
@@ -575,7 +595,7 @@
                   required
                 />
                 <div class="hint">
-                  For example 5 for 5 minute appointments.
+                  For Example: "5" for 5 minute appointments.
                 </div>
               </div>
             </div>
@@ -602,6 +622,7 @@
 
           <div class="live-clock" id="liveClock">--:--:--</div>
           <div class="live-label">Current local time</div>
+          <div class="live-date" id="liveDate">-</div>
 
           <div class="status-grid">
             <div class="status-tile">
@@ -988,6 +1009,25 @@
       const now = new Date();
       liveClockEl.textContent = now.toLocaleTimeString();
 
+      // Get timezone abbreviation (e.g., "GMT", "BST")
+      const timeFormatter = new Intl.DateTimeFormat('en-GB', {
+        timeZoneName: 'short'
+      });
+      const parts = timeFormatter.formatToParts(now);
+      const timezoneName = parts.find(part => part.type === 'timeZoneName')?.value || '';
+
+      // Update the live label to include timezone
+      document.querySelector('.live-label').textContent = `Current local time (${timezoneName})`;
+
+      // Format: "Tuesday 25th November 2025"
+      const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+      const dateStr = now.toLocaleDateString('en-GB', options);
+      // Add ordinal suffix (st, nd, rd, th)
+      const dayNum = now.getDate();
+      const suffix = ['st', 'nd', 'rd'][((dayNum + 90) % 100 - 10) % 10 - 1] || 'th';
+      const formattedDate = dateStr.replace(dayNum.toString(), `${dayNum}<sup>${suffix}</sup>`);
+      document.getElementById("liveDate").innerHTML = formattedDate;
+      
       if (!isRunning || !schedule.length || nextIndex >= schedule.length) {
         if (isRunning && nextIndex >= schedule.length) {
           isRunning = false;
