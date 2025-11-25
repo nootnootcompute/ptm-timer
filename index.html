@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Parents Evening Slot Timer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #0f172a;
+      --bg-card-soft: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --danger: #f97316;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0b1120, #020617);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    body.flash {
+      animation: flash-bg 0.2s ease-in-out alternate 8;
+    }
+
+    @keyframes flash-bg {
+      0% {
+        background-color: #020617;
+      }
+      100% {
+        background-color: #7f1d1d;
+      }
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 960px;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-card-soft));
+      border-radius: 1.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      padding: 1.75rem 2rem 2rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    header {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    header h1 span.accent {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.1rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+    }
+
+    header p {
+      margin: 0.35rem 0 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Small toggle button to hide/show configuration */
+    .toggle-btn {
+      appearance: none;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      background: transparent;
+      color: var(--text-muted);
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .toggle-btn:hover {
+      color: var(--text-main);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 60%),
+                  radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.08), transparent 55%),
+                  rgba(15, 23, 42, 0.9);
+      border-radius: 1.25rem;
+      padding: 1.25rem 1.4rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .panel-title {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+    }
+
+    form {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.3rem;
+      font-size: 0.9rem;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .field-row .field {
+      flex: 1;
+    }
+
+    label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    input[type="time"],
+    input[type="number"] {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-main);
+      font-size: 0.95rem;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    input:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.2rem;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      color: #0b1120;
+      box-shadow: 0 12px 30px rgba(34, 197, 94, 0.35);
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-muted);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .live-clock {
+      font-variant-numeric: tabular-nums;
+      font-size: 3.2rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-align: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .live-label {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 1rem;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 640px) {
+      .status-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .status-tile {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 0.9rem;
+      padding: 0.6rem 0.7rem;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    .status-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .status-value {
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+
+    .status-value.big {
+      font-size: 1.35rem;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+    }
+
+    .status-tag.running {
+      background: rgba(34, 197, 94, 0.16);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.7);
+    }
+
+    .status-tag.idle {
+      background: rgba(148, 163, 184, 0.1);
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+    }
+
+    .status-tag.finished {
+      background: rgba(56, 189, 248, 0.15);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+    }
+
+    .status-tag.error {
+      background: rgba(248, 113, 113, 0.12);
+      color: #fecaca;
+      border: 1px solid rgba(248, 113, 113, 0.9);
+    }
+
+    .mini {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.6rem;
+      text-align: right;
+    }
+
+    .mini strong {
+      color: var(--accent);
+    }
+
+    /* When the layout has the class config-hidden, hide the config panel and maximise the display */
+    .layout.config-hidden {
+      grid-template-columns: 1fr !important;
+    }
+    .layout.config-hidden .panel:first-child {
+      display: none;
+    }
+    .layout.config-hidden .panel:last-child {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+    /* Make the main clock larger in the maximised view */
+    .layout.config-hidden .live-clock {
+      font-size: 4.8rem;
+    }
+    /* Slightly reduce the card padding so the display uses more space */
+    .layout.config-hidden .card {
+      padding: 1rem 1.25rem 1.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card" id="mainCard">
+      <header>
+        <h1>
+          Parents Evening Slot Timer
+          <span class="accent">Every N minutes between two times</span>
+        </h1>
+
+        <!-- Toggle button to hide/show the configuration panel -->
+        <div>
+          <button id="toggleConfigBtn" class="toggle-btn" type="button">Hide configuration</button>
+        </div>
+      </header>
+
+      <div class="layout">
+        <!-- Left: configuration -->
+        <section class="panel">
+          <div class="panel-title">Configuration</div>
+          <form id="configForm">
+            <div class="field-row">
+              <div class="field">
+                <label for="startTime">Start time</label>
+                <input type="time" id="startTime" required value="16:00" />
+              </div>
+              <div class="field">
+                <label for="endTime">End time</label>
+                <input type="time" id="endTime" required value="18:00" />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="frequency">Alert every (minutes)</label>
+                <input
+                  type="number"
+                  id="frequency"
+                  min="1"
+                  step="1"
+                  value="5"
+                  required
+                />
+                <div class="hint">
+                  For example 5 for 5 minute appointments.
+                </div>
+              </div>
+            </div>
+
+            <div class="buttons">
+              <button type="submit" class="btn-primary" id="startButton">
+                ▶ Start schedule
+              </button>
+              <button type="button" class="btn-secondary" id="stopButton" disabled>
+                ■ Stop or reset
+              </button>
+            </div>
+
+            <div class="hint">
+              The schedule uses <strong>today's date</strong>. If all your times are already in the past,
+              it will ask you to pick later times.
+            </div>
+          </form>
+        </section>
+
+        <!-- Right: live display -->
+        <section class="panel">
+          <div class="panel-title">Display</div>
+
+          <div class="live-clock" id="liveClock">--:--:--</div>
+          <div class="live-label">Current local time</div>
+
+          <div class="status-grid">
+            <div class="status-tile">
+              <div class="status-label">Next meeting time</div>
+              <div class="status-value" id="nextAlert">-</div>
+            </div>
+            <div class="status-tile">
+              <div class="status-label">Time until next meeting</div>
+              <div class="status-value big" id="countdown">-</div>
+            </div>
+            <div class="status-tile">
+              <div class="status-label">Schedule status</div>
+              <div class="status-value" id="statusText">
+                <span class="status-tag idle" id="statusTag">Idle</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mini">
+            Tip: when you are happy with the setup, press <strong>F11</strong> in your browser for a clean
+            full screen on the projector.
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let schedule = [];
+    let nextIndex = 0;
+    let isRunning = false;
+    let flashTimeout = null;
+    let audioContext = null;
+
+    // New: track scheduled timeouts so we can cancel them
+    let scheduledTimeouts = [];
+    let alertsScheduled = false;
+
+    const liveClockEl = document.getElementById("liveClock");
+    const nextAlertEl = document.getElementById("nextAlert");
+    const countdownEl = document.getElementById("countdown");
+    const statusTagEl = document.getElementById("statusTag");
+    const startButton = document.getElementById("startButton");
+    const stopButton = document.getElementById("stopButton");
+
+    // Toggle control
+    const toggleConfigBtn = document.getElementById("toggleConfigBtn");
+    const layoutEl = document.querySelector(".layout");
+
+    function setStatus(mode, label) {
+      statusTagEl.className = "status-tag " + mode;
+      statusTagEl.textContent = label;
+    }
+
+    // Toggle the visibility of the configuration panel and maximise display
+    function toggleConfig() {
+      const hidden = layoutEl.classList.toggle("config-hidden");
+      toggleConfigBtn.textContent = hidden ? "Show configuration" : "Hide configuration";
+      // keep focus on main controls when hiding so keyboard can continue to work
+      if (hidden) {
+        // optional: focus the start button when config is hidden
+        startButton.focus();
+      }
+    }
+
+    toggleConfigBtn.addEventListener("click", toggleConfig);
+
+    function buildSchedule() {
+      const startValue = document.getElementById("startTime").value;
+      const endValue = document.getElementById("endTime").value;
+      const freqValue = document.getElementById("frequency").value;
+
+      if (!startValue || !endValue) {
+        alert("Please choose both a start and an end time.");
+        return null;
+      }
+
+      const freqMinutes = parseInt(freqValue, 10);
+      if (isNaN(freqMinutes) || freqMinutes <= 0) {
+        alert("Frequency must be a positive whole number of minutes.");
+        return null;
+      }
+
+      const [startHour, startMinute] = startValue.split(":").map(Number);
+      const [endHour, endMinute] = endValue.split(":").map(Number);
+
+      const today = new Date();
+      const start = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        startHour,
+        startMinute,
+        0,
+        0
+      );
+      const end = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        endHour,
+        endMinute,
+        0,
+        0
+      );
+
+      if (end <= start) {
+        alert("End time must be after the start time.");
+        return null;
+      }
+
+      const times = [];
+      let t = new Date(start.getTime());
+      while (t <= end) {
+        times.push(new Date(t.getTime()));
+        t.setMinutes(t.getMinutes() + freqMinutes);
+      }
+
+      const now = new Date();
+      const firstFutureIndex = times.findIndex((time) => time >= now);
+
+      if (firstFutureIndex === -1) {
+        alert("All of the alert times are already in the past for today.");
+        return null;
+      }
+
+      return {
+        times,
+        startIndex: firstFutureIndex,
+      };
+    }
+
+    function startSchedule(event) {
+      event.preventDefault();
+
+      const result = buildSchedule();
+      if (!result) {
+        setStatus("error", "Check times");
+        return;
+      }
+
+      schedule = result.times;
+      nextIndex = result.startIndex;
+      isRunning = true;
+
+      startButton.disabled = true;
+      stopButton.disabled = false;
+      setStatus("running", "Running");
+
+      nextAlertEl.textContent = schedule[nextIndex].toLocaleTimeString();
+
+      // Pre-schedule alerts (audio scheduled against audioContext clock)
+      scheduleAlertsForSchedule();
+    }
+
+    function stopSchedule() {
+      isRunning = false;
+      schedule = [];
+      nextIndex = 0;
+      countdownEl.textContent = "-";
+      nextAlertEl.textContent = "-";
+      startButton.disabled = false;
+      stopButton.disabled = true;
+      setStatus("idle", "Idle");
+      document.body.classList.remove("flash");
+      if (flashTimeout) {
+        clearTimeout(flashTimeout);
+        flashTimeout = null;
+      }
+      // Cancel any scheduled timeouts
+      clearScheduledAlerts();
+      alertsScheduled = false;
+    }
+
+    function triggerAlert() {
+      // Backwards-compatible immediate alert (kept for safety)
+      document.body.classList.add("flash");
+      if (flashTimeout) clearTimeout(flashTimeout);
+      flashTimeout = setTimeout(() => {
+        document.body.classList.remove("flash");
+      }, 1600);
+
+      // Beep: 3 quick beeps (immediate)
+      playBeep(3, 0.22);
+    }
+
+    function playBeep(count = 1, interval = 0.15) {
+      try {
+        if (!audioContext) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) {
+            return; // No audio support, silently fail
+          }
+          audioContext = new AudioCtx();
+        }
+
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+
+        const duration = 0.28; // length of each beep in seconds
+        const now = audioContext.currentTime;
+        const volume = 0.9; // slightly louder (0.0 - 1.0)
+
+        for (let i = 0; i < count; i++) {
+          const startTime = now + i * interval;
+
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+
+          oscillator.type = "sine";
+          oscillator.frequency.value = 880;
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+
+          // Soft attack then quick decay
+          gainNode.gain.setValueAtTime(0.001, startTime);
+          gainNode.gain.exponentialRampToValueAtTime(Math.max(0.001, volume), startTime + 0.02);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+          oscillator.start(startTime);
+          oscillator.stop(startTime + duration + 0.02);
+        }
+      } catch (e) {
+        // If anything goes wrong with audio, we just skip the sound
+      }
+    }
+
+    // New: schedule beep(s) to start at an exact wall-clock timestamp (ms)
+    function playBeepAt(timestampMs, count = 1, interval = 0.15) {
+      try {
+        if (!audioContext) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return;
+          audioContext = new AudioCtx();
+        }
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+
+        const duration = 0.28;
+        const volume = 0.9;
+        // map wall-clock timestamp -> audioContext time
+        const deltaSec = (timestampMs - Date.now()) / 1000;
+        let startBase = audioContext.currentTime + deltaSec;
+        // If the desired time is already in the past, play immediately
+        if (startBase < audioContext.currentTime + 0.001) {
+          startBase = audioContext.currentTime + 0.001;
+        }
+
+        for (let i = 0; i < count; i++) {
+          const startTime = startBase + i * interval;
+
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+
+          oscillator.type = "sine";
+          oscillator.frequency.value = 880;
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+
+          gainNode.gain.setValueAtTime(0.001, startTime);
+          gainNode.gain.exponentialRampToValueAtTime(Math.max(0.001, volume), startTime + 0.02);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+          oscillator.start(startTime);
+          oscillator.stop(startTime + duration + 0.02);
+        }
+      } catch (e) {
+        // audio failed - ignore
+      }
+    }
+
+    // New: schedule visual/audio for a particular Date object
+    function scheduleAlertFor(timeDate, index) {
+      const ms = timeDate.getTime() - Date.now();
+      const delay = Math.max(0, ms);
+
+      const t = setTimeout(() => {
+        // Visual flash (precisely when timeout fires)
+        document.body.classList.add("flash");
+        if (flashTimeout) clearTimeout(flashTimeout);
+        flashTimeout = setTimeout(() => {
+          document.body.classList.remove("flash");
+        }, 1600);
+
+        // Audio scheduled with audioContext so it fires exactly on the second
+        playBeepAt(timeDate.getTime(), 3, 0.22);
+
+        // Advance nextIndex and update UI
+        // If this scheduled timeout corresponds to the current nextIndex, move forward
+        if (index === nextIndex) {
+          nextIndex = index + 1;
+          if (nextIndex >= schedule.length) {
+            isRunning = false;
+            setStatus("finished", "Finished");
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            nextAlertEl.textContent = "-";
+            countdownEl.textContent = "-";
+          } else {
+            nextAlertEl.textContent = schedule[nextIndex].toLocaleTimeString();
+          }
+        }
+      }, delay);
+
+      scheduledTimeouts.push(t);
+    }
+
+    // New: schedule all future alerts (starting from nextIndex)
+    function scheduleAlertsForSchedule() {
+      clearScheduledAlerts();
+      for (let i = nextIndex; i < schedule.length; i++) {
+        scheduleAlertFor(schedule[i], i);
+      }
+      alertsScheduled = true;
+    }
+
+    function clearScheduledAlerts() {
+      for (const t of scheduledTimeouts) {
+        clearTimeout(t);
+      }
+      scheduledTimeouts = [];
+    }
+
+    function tick() {
+      const now = new Date();
+      liveClockEl.textContent = now.toLocaleTimeString();
+
+      if (!isRunning || !schedule.length || nextIndex >= schedule.length) {
+        if (isRunning && nextIndex >= schedule.length) {
+          isRunning = false;
+          setStatus("finished", "Finished");
+          startButton.disabled = false;
+          stopButton.disabled = true;
+        }
+        return;
+      }
+
+      const nextTime = schedule[nextIndex];
+      nextAlertEl.textContent = nextTime.toLocaleTimeString();
+
+      const diffMs = nextTime.getTime() - now.getTime();
+
+      if (diffMs <= 0) {
+        // If we pre-scheduled alerts, they already handled audio/visual and advanced nextIndex.
+        // Just show 0:00 until the scheduled handler updates indices/UI.
+        countdownEl.textContent = "0:00";
+
+        // If alerts were not pre-scheduled (fallback), trigger immediately
+        if (!alertsScheduled) {
+          triggerAlert();
+          nextIndex += 1;
+          if (nextIndex >= schedule.length) {
+            isRunning = false;
+            setStatus("finished", "Finished");
+            startButton.disabled = false;
+            stopButton.disabled = true;
+          }
+        }
+        return;
+      }
+
+      const totalSeconds = Math.round(diffMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      countdownEl.textContent =
+        String(minutes) + ":" + String(seconds).padStart(2, "0");
+    }
+
+    // Wire up events
+    document.getElementById("configForm").addEventListener("submit", startSchedule);
+    document.getElementById("stopButton").addEventListener("click", stopSchedule);
+
+    // Main clock and timer loop
+    setStatus("idle", "Idle");
+    setInterval(tick, 250);
+  </script>
+</body>
+</html>
