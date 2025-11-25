@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Parents Evening Slot Timer</title>
+  <title>PTM Timer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -653,24 +653,34 @@
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       const isLightMode = savedTheme ? savedTheme === "light" : !prefersDark;
 
-      if (isLightMode) {
-        htmlElement.classList.add("light-mode");
-        themeToggle.checked = true;
+      // Be defensive: only touch the toggle if it exists (avoids script errors)
+      if (themeToggle) {
+        if (isLightMode) {
+          htmlElement.classList.add("light-mode");
+          themeToggle.checked = true;
+        } else {
+          htmlElement.classList.remove("light-mode");
+          themeToggle.checked = false;
+        }
       } else {
-        htmlElement.classList.remove("light-mode");
-        themeToggle.checked = false;
+        // fallback: still apply theme class even if the toggle input couldn't be found
+        if (isLightMode) htmlElement.classList.add("light-mode");
+        else htmlElement.classList.remove("light-mode");
       }
     }
 
-    themeToggle.addEventListener("change", () => {
-      if (themeToggle.checked) {
-        htmlElement.classList.add("light-mode");
-        localStorage.setItem("theme", "light");
-      } else {
-        htmlElement.classList.remove("light-mode");
-        localStorage.setItem("theme", "dark");
-      }
-    });
+    // Only add listener if the element exists
+    if (themeToggle) {
+      themeToggle.addEventListener("change", () => {
+        if (themeToggle.checked) {
+          htmlElement.classList.add("light-mode");
+          localStorage.setItem("theme", "light");
+        } else {
+          htmlElement.classList.remove("light-mode");
+          localStorage.setItem("theme", "dark");
+        }
+      });
+    }
 
     initTheme();
 
@@ -1011,3 +1021,20 @@
         }
         return;
       }
+
+      // Regular countdown display
+      const remainingMinutes = Math.floor(diffMs / 60000);
+      const remainingSeconds = Math.floor((diffMs % 60000) / 1000);
+      countdownEl.textContent = `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // final wiring: attach handlers and start the clock loop
+    document.getElementById("configForm").addEventListener("submit", startSchedule);
+    stopButton.addEventListener("click", stopSchedule);
+
+    // run one immediate tick and start the interval so the clock and countdown update
+    tick();
+    setInterval(tick, 250);
+  </script>
+</body>
+</html>
