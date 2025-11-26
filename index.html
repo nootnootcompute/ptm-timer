@@ -364,10 +364,10 @@
       font-family: "Red Hat Text", sans-serif;
     }
 
-    html.light-mode .btn-secondary {
+    /* html.light-mode .btn-secondary {
       background: rgba(255, 255, 255, 0.9);
       border-color: rgba(15, 23, 42, 0.2);
-    }
+    } */
 
     .live-clock {
       font-variant-numeric: tabular-nums;
@@ -481,9 +481,19 @@
       color: #e5e7eb;
       border-color: rgba(148, 163, 184, 0.7);
     }
+    html.light-mode .status-tag.idle {
+      background: #e5e7eb;
+      color: rgba(148, 163, 184, 0.9);
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+    html.light-mode .status-tag.running {
+      background: rgba(34, 197, 94, 0.16);
+      color: rgba(12, 160, 67, 0.7);
+      border-color: #4ade80;
+    }
     .status-tag.running {
       background: rgba(34, 197, 94, 0.16);
-      color: #4ade80;
+      color: #4ade80;;
       border-color: rgba(34, 197, 94, 0.7);
     }
     .status-tag.finished {
@@ -746,20 +756,9 @@
         line-height: 1;
         transition: background 0.2s, border-color 0.2s, color 0.2s;
       }
-      
-      .status-tag.idle {
-        background: rgba(148, 163, 184, 0.1);
-        color: #e5e7eb;
-        border-color: rgba(148, 163, 184, 0.7);
-        /* REMOVE transform, position, top, etc! */
-      }
-      height: 100%;
-      /* This keeps text baseline in place */
-      position: relative;
-    }
 
     .layout.config-hidden .panel-title {
-      display: none;
+      visibility: hidden;
     }
 
     .layout.config-hidden .panel:last-child {
@@ -850,7 +849,7 @@
 
         <!-- Right: live display -->
         <section class="panel">
-          <div class="panel-title">Display</div>
+          <div class="panel-title" id="displayTitle">Display</div>
 
           <div class="clock-block">
             <div class="live-clock" id="liveClock">--:--:--</div>
@@ -1029,6 +1028,12 @@
       if (cardEl) cardEl.classList.toggle("maximized", hidden);
       // keep keyboard focus usable when config is hidden
       if (hidden && startButton) startButton.focus();
+
+      // HIDE display title in maximized mode
+       const displayTitle = document.getElementById('displayTitle');
+      if (displayTitle) {
+        displayTitle.style.visibility = hidden ? 'hidden' : 'visible';
+      }
     }
     
     toggleConfigBtn.addEventListener("click", toggleConfig);
