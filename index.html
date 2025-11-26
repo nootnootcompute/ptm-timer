@@ -22,8 +22,8 @@
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
       --danger: #f97316;
-      /* responsive space for the footer + theme toggle */
-      --bottom-reserve: clamp(4.5rem, 10vmin, 7rem);
+      /* reserve space for theme toggle + footer (bottom banner) */
+      --bottom-reserve: 6.25rem;
     }
 
     html.light-mode {
@@ -104,8 +104,8 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
       padding: 1.75rem 2rem 2rem;
       border: 1px solid rgba(148, 163, 184, 0.35);
-      /* fill viewport but leave space for bottom banner (footer + theme toggle) */
-      height: calc(100dvh - 3rem - var(--bottom-reserve));
+      /* fill viewport minus wrapper padding; no scrollbars */
+      height: calc(100dvh - 3rem);
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
@@ -1001,6 +1001,12 @@
     }
 
     initTheme();
+    // Sync time with worldtimeapi.org
+let skew = 0;
+function getNow() { return new Date(Date.now() + skew); }
+fetch("https://worldtimeapi.org/api/ip")
+  .then(r => r.json())
+  .then(d => { skew = new Date(d.datetime).getTime() - Date.now(); });
 
     // State
     let schedule = [];
@@ -1099,7 +1105,7 @@
         t.setMinutes(t.getMinutes() + freqMinutes);
       }
 
-      const now = new Date();
+      const now = getNow();
       const firstFutureIndex = times.findIndex((time) => time >= now);
 
       if (firstFutureIndex === -1) {
@@ -1233,7 +1239,7 @@
         const duration = 0.28;
         const volume = 0.9;
         // map wall-clock timestamp -> audioContext time
-        const deltaSec = (timestampMs - Date.now()) / 1000;
+        const deltaSec = (timestampMs - getNow().getTime()) / 1000;
         let startBase = audioContext.currentTime + deltaSec;
         // If the desired time is already in the past, play immediately
         if (startBase < audioContext.currentTime + 0.001) {
@@ -1266,7 +1272,7 @@
 
     // New: schedule visual/audio for a particular Date object
     function scheduleAlertFor(timeDate, index) {
-      const ms = timeDate.getTime() - Date.now();
+      const ms = timeDate.getTime() - getNow().getTime();
       const delay = Math.max(0, ms);
 
       const t = setTimeout(() => {
@@ -1321,7 +1327,7 @@
     }
 
     function tick() {
-      const now = new Date();
+      const now = getNow();
       liveClockEl.textContent = now.toLocaleTimeString();
 
       // Get timezone abbreviation (e.g., "GMT", "BST")
