@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script type="module" defer>
+    import { polyfillCountryFlagEmojis } from "https://cdn.skypack.dev/country-flag-emoji-polyfill";
+    polyfillCountryFlagEmojis();
+  </script>
   <style>
     :root {
       --bg-main: #020617;
@@ -389,11 +393,15 @@
 
     .live-date {
       text-align: center;
-      font-size: 1.5rem;
-      font-weight: bold;
+      font-size: 1rem;
+      font-weight: 500;
       color: var(--accent);
+      background: var(--accent-soft);
       margin-bottom: 1rem;
-      text-shadow: 0 0 8px var(--accent), 0 0 0.5px rgba(219,0,183,0.38);
+      padding: 0.1rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
     }
 
     .live-date sup {
@@ -401,7 +409,7 @@
       vertical-align: super;
       font-weight: bold;
       margin-left: 0.01em;
-      text-shadow: 0 0 8px var(--accent), 0 0 0.5px rgba(219,0,183,0.38);
+      /* text-shadow: 0 0 8px var(--accent), 0 0 0.5px rgba(219,0,183,0.38); */
     }
 
     .status-grid {
@@ -483,7 +491,7 @@
     }
     html.light-mode .status-tag.idle {
       background: #e5e7eb;
-      color: rgba(148, 163, 184, 0.9);
+      color: rgba(80, 88, 99, 0.9);
       border-color: rgba(148, 163, 184, 0.7);
     }
     html.light-mode .status-tag.running {
@@ -777,6 +785,13 @@
   align-items: stretch;           /* Stretch children to the panel width */
 }
 
+.noto-color-emoji-regular {
+  font-family: "Noto Color Emoji", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
   </style>
 </head>
 <body>
@@ -895,7 +910,7 @@
 
   <!-- Footer attribution -->
   <div class="footer" style="display: flex; align-items: center; gap: 8px;">
-    <span>🇬🇧🇧🇭 Programmed by <b>Mr Nat</b> - 2025</span>
+    <span style="font-family: 'Twemoji Country Flags', sans-serif;">&#x1F1EC;&#x1F1E7; &#x1F1E7;&#x1F1ED;</span><span>Programmed by <b>Mr Nat</b> - 2025</span>
     <span class="penguin-container" style="position: relative; display: inline-block;">
       <span class="noot-bubble" style="
         position: absolute;
