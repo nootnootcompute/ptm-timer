@@ -105,7 +105,7 @@
       padding: 1.75rem 2rem 2rem;
       border: 1px solid rgba(148, 163, 184, 0.35);
       /* fill viewport minus wrapper padding; no scrollbars */
-      height: calc(100dvh - 3rem);
+      height: calc(100dvh - 3rem - var(--bottom-reserve)); /* leave space for footer + slider */
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
@@ -226,6 +226,7 @@
       margin-bottom: 1.25rem; /* rem-based, scales with root font-size */
     }
 
+    /* Config form: fill panel and push actions to bottom for even spacing */
     form {
       display: flex;
       flex-direction: column;
@@ -308,15 +309,14 @@
     }
 
     .hint.hint--bottom {
-      margin-top: 1.25rem;
+      margin-top: 0.75rem;            /* small space under buttons */
       text-align: center;
     }
 
     .buttons {
       display: flex;
       gap: 0.5rem;
-      margin-top: 0.2rem;
-      font-family: "Red Hat Text", sans-serif;
+      margin-top: auto;               /* push buttons (and bottom hint) to panel bottom */
       justify-content: center;
       flex-wrap: wrap;
     }
@@ -745,20 +745,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 100%;      .status-tag {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1em;
-        min-height: 1.7em;
-        padding: 0.17em 1.1em;     /* <-- EVEN vertical padding! */
-        border-radius: 999px;
-        border: 1px solid;
-        box-sizing: border-box;
-        font-weight: 500;
-        line-height: 1;
-        transition: background 0.2s, border-color 0.2s, color 0.2s;
-      }
+      width: 100%;
+    }
 
     .layout.config-hidden .panel-title {
       visibility: hidden;
