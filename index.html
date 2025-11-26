@@ -262,7 +262,9 @@
       border: 1px solid rgba(148, 163, 184, 0.6);
       background: rgba(15, 23, 42, 0.96);
       color: var(--text-main);
-      font-size: 0.95rem;
+      font-size: 0.75rem;
+      font-family: "Red Hat Text", sans-serif;
+      font-weight: 300;
     }
 
     html.light-mode input[type="time"],
@@ -341,10 +343,24 @@
       font-family: "Red Hat Text", sans-serif;
     }
 
-    .btn-secondary {
+    .btn-primary-disabled {
       background: rgba(15, 23, 42, 0.9);
       color: var(--text-muted);
       border: 1px solid rgba(148, 163, 184, 0.5);
+      font-family: "Red Hat Text", sans-serif;
+    }
+
+    .btn-secondary-disabled {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-muted);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-family: "Red Hat Text", sans-serif;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #e90ebd, #d81212);
+      color: #0b1120;
+      box-shadow: 0 12px 30px rgba(197, 34, 59, 0.35);
       font-family: "Red Hat Text", sans-serif;
     }
 
@@ -355,7 +371,7 @@
 
     .live-clock {
       font-variant-numeric: tabular-nums;
-      font-size: 3.2rem;
+      font-size: 4rem;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-align: center;
@@ -373,10 +389,19 @@
 
     .live-date {
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 1.5rem;
       font-weight: bold;
-      color: var(--text-muted);
+      color: var(--accent);
       margin-bottom: 1rem;
+      text-shadow: 0 0 8px var(--accent), 0 0 0.5px rgba(219,0,183,0.38);
+    }
+
+    .live-date sup {
+      font-size: 0.55em;
+      vertical-align: super;
+      font-weight: bold;
+      margin-left: 0.01em;
+      text-shadow: 0 0 8px var(--accent), 0 0 0.5px rgba(219,0,183,0.38);
     }
 
     .status-grid {
@@ -386,6 +411,11 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .status-grid {
+      max-height: none;
+      overflow: visible;
+    }
+
     @media (max-width: 640px) {
       .status-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -393,11 +423,15 @@
     }
 
     .status-tile {
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Vertically center children */
+      align-items: center;     /* Horizontally center children */
       background: rgba(15, 23, 42, 0.95);
       border-radius: 0.9rem;
-      padding: 0.6rem 0.7rem;
+      padding: 0.4em 0.4rem;
       border: 1px solid rgba(31, 41, 55, 0.9);
-    }
+}
 
     html.light-mode .status-tile {
       background: rgba(255, 255, 255, 0.95);
@@ -418,59 +452,57 @@
     }
 
     .status-value.big {
-      font-size: 1.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 2.1em;      /* force same height for all three tiles */
     }
 
+    .status-dash,
+    .status-tag {
+      align-self: center;
+    }
     .status-tag {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      font-size: 0.8rem;
-      padding: 0.15rem 0.55rem;
+      justify-content: center;
+      font-size: 1.25em;
+      min-height: 1.35em;
+      padding: 0.09em 0.8em;     /* <-- EVEN vertical padding! */
       border-radius: 999px;
+      border: 1px solid;
+      box-sizing: border-box;
+      font-weight: 500;
+      line-height: 1;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
-
-    .status-tag.running {
-      background: rgba(34, 197, 94, 0.16);
-      color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.7);
-    }
-
     .status-tag.idle {
       background: rgba(148, 163, 184, 0.1);
       color: #e5e7eb;
-      border: 1px solid rgba(148, 163, 184, 0.7);
+      border-color: rgba(148, 163, 184, 0.7);
     }
-
-    html.light-mode .status-tag.idle {
-      color: #1f2937;
+    .status-tag.running {
+      background: rgba(34, 197, 94, 0.16);
+      color: #4ade80;
+      border-color: rgba(34, 197, 94, 0.7);
     }
-
     .status-tag.finished {
       background: rgba(56, 189, 248, 0.15);
       color: #7dd3fc;
-      border: 1px solid rgba(56, 189, 248, 0.7);
+      border-color: rgba(56, 189, 248, 0.7);
     }
-
-    html.light-mode .status-tag.finished {
-      color: #0c4a6e;
-    }
-
     .status-tag.error {
       background: rgba(248, 113, 113, 0.12);
       color: #fecaca;
-      border: 1px solid rgba(248, 113, 113, 0.9);
-    }
-
-    html.light-mode .status-tag.error {
-      color: #7f1d1d;
+      border-color: rgba(248, 113, 113, 0.9);
     }
 
     .mini {
-      font-size: 0.75rem;
+      font-size: 0.6rem;
       color: var(--text-muted);
       margin-top: 0.6rem;
       text-align: right;
+      font-style: italic;
     }
 
     .mini strong {
@@ -487,13 +519,14 @@
     .layout.config-hidden .panel:last-child {
       padding-left: 2rem;
       padding-right: 2rem;
-      padding-top: 1.25rem;    /* reduced from 2.5rem */
-      padding-bottom: 2rem;   /* extra space below status area */
-      min-height: calc(60vh - 4rem); /* keep right panel tall relative to card */
+      padding-top: 1rem;    /* reduced from 2.5rem */
+      padding-bottom: 0.5rem;   /* extra space below status area */
+      min-height: 0; /* keep right panel tall relative to card */
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      gap: 1.25rem;
+      gap: 0.75rem;
+      overflow: hidden;
     }
     /* Make the main clock larger in the maximised view */
     .layout.config-hidden .live-clock {
@@ -686,6 +719,65 @@
     .layout.config-hidden header {
       height: clamp(3rem, 4.8vh, 4rem);
     }
+
+    .status-tag.align-center {
+      /* This centers the tag vertically with the dashes visually */
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.35em;    /* Match .status-value.big font-size line height */
+      padding-top: 0.1em;    /* Fine-tune this for pixel-perfect alignment */
+    }
+
+   .status-tag-offset {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;      .status-tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1em;
+        min-height: 1.7em;
+        padding: 0.17em 1.1em;     /* <-- EVEN vertical padding! */
+        border-radius: 999px;
+        border: 1px solid;
+        box-sizing: border-box;
+        font-weight: 500;
+        line-height: 1;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+      }
+      
+      .status-tag.idle {
+        background: rgba(148, 163, 184, 0.1);
+        color: #e5e7eb;
+        border-color: rgba(148, 163, 184, 0.7);
+        /* REMOVE transform, position, top, etc! */
+      }
+      height: 100%;
+      /* This keeps text baseline in place */
+      position: relative;
+    }
+
+    .layout.config-hidden .panel-title {
+      display: none;
+    }
+
+    .layout.config-hidden .panel:last-child {
+  display: flex;
+  flex-direction: column;
+  /* Center all live content vertically and horizontally */
+  justify-content: center;
+  align-items: center;
+}
+
+.layout:not(.config-hidden) .panel:last-child {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between; /* Evenly distributes space between children */
+  align-items: stretch;           /* Stretch children to the panel width */
+}
+
   </style>
 </head>
 <body>
@@ -744,7 +836,7 @@
               <button type="submit" class="btn-primary" id="startButton">
                 ▶ Start Schedule
               </button>
-              <button type="button" class="btn-secondary" id="stopButton" disabled>
+              <button type="button" class="btn-secondary-disabled" id="stopButton" disabled>
                 ■ Stop/Reset
               </button>
             </div>
@@ -768,23 +860,26 @@
 
           <div class="status-grid">
             <div class="status-tile">
-              <div class="status-label">Next meeting time</div>
-              <div class="status-value" id="nextAlert">-</div>
+              <div class="status-label" style="text-align: center;">Next meeting</div>
+              <div class="status-value big" id="nextAlert">
+                <span class="status-dash">-</span>
+              </div>
             </div>
             <div class="status-tile">
-              <div class="status-label">Time until next meeting</div>
-              <div class="status-value big" id="countdown">-</div>
+              <div class="status-label" style="text-align: center;">Time Remaining</div>
+              <div class="status-value big" id="countdown">
+                <span class="status-dash">-</span>
+              </div>
             </div>
             <div class="status-tile">
-              <div class="status-label">Schedule status</div>
-              <div class="status-value" id="statusText">
+              <div class="status-value big" id="statusText">
                 <span class="status-tag idle" id="statusTag">Idle</span>
               </div>
             </div>
           </div>
 
           <div class="mini">
-            Tip: when you are happy with the setup, press <strong>F11</strong> in your browser for a clean
+            <b>Tip:</b> Press <strong>F11</strong> in your browser for a clean
             full screen on the projector.
           </div>
         </section>
@@ -800,12 +895,63 @@
   </div>
 
   <!-- Footer attribution -->
-  <div class="footer">
+  <div class="footer" style="display: flex; align-items: center; gap: 8px;">
     <span>Programmed by <b>Mr Nat</b> - 2025</span>
-    <span style="font-size: 20px;">🐧</span>
+    <span class="penguin-container" style="position: relative; display: inline-block;">
+      <span class="noot-bubble" style="
+        position: absolute;
+        left: 50%;
+        bottom: 120%;
+        transform: translateX(-50%);
+        background: #fff;
+        color: #020617;
+        padding: 2px 10px;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        font-size: 0.5rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        z-index: 2;
+        white-space: nowrap;
+      ">
+        Noot Noot
+        <span style="
+          position: absolute;
+          left: 50%;
+          top: 100%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 0;
+          border-left: 7px solid transparent;
+          border-right: 7px solid transparent;
+          border-top: 8px solid #fff;
+          filter: drop-shadow(0 1px 1px rgba(0,0,0,0.07));
+        "></span>
+      </span>
+      <span class="penguin-emoji" style="font-size: 20px; cursor: pointer; user-select: none;">🐧</span>
+      <audio id="noot-audio" src="assets/nootnoot.mp3" preload="auto"></audio>
+    </span>
   </div>
 
   <script>
+    // Penguin Noot Noot
+    const penguin = document.querySelector('.penguin-emoji');
+    const bubble = document.querySelector('.noot-bubble');
+    const audio = document.getElementById('noot-audio');
+
+    penguin.addEventListener('click', () => {
+      // Play sound from start
+      audio.currentTime = 0;
+      audio.volume = 0.3;
+      audio.play();
+      // Show bubble
+      bubble.style.opacity = '1';
+      setTimeout(() => {
+        bubble.style.opacity = '0';
+      }, 2000);
+    });
+
     // Theme toggle
     const themeToggle = document.getElementById("themeToggle");
     const htmlElement = document.documentElement;
@@ -966,10 +1112,14 @@
       isRunning = true;
 
       startButton.disabled = true;
+      startButton.classList.remove("btn-primary");
+      startButton.classList.add("btn-primary-disabled");
       stopButton.disabled = false;
+      stopButton.classList.remove("btn-secondary-disabled");
+      stopButton.classList.add("btn-secondary");
       setStatus("running", "Running");
 
-      nextAlertEl.textContent = schedule[nextIndex].toLocaleTimeString();
+      nextAlertEl.textContent = schedule[nextIndex].toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 
       // Pre-schedule alerts (audio scheduled against audioContext clock)
       scheduleAlertsForSchedule();
@@ -982,7 +1132,11 @@
       countdownEl.textContent = "-";
       nextAlertEl.textContent = "-";
       startButton.disabled = false;
+      startButton.classList.remove("btn-primary-disabled");
+      startButton.classList.add("btn-primary");
       stopButton.disabled = true;
+      stopButton.classList.remove("btn-secondary");
+      stopButton.classList.add("btn-secondary-disabled");
       setStatus("idle", "Idle");
       document.body.classList.remove("flash");
       if (flashTimeout) {
@@ -1119,7 +1273,11 @@
             isRunning = false;
             setStatus("finished", "Finished");
             startButton.disabled = false;
+            startButton.classList.remove("btn-primary-disabled");
+            startButton.classList.add("btn-primary");
             stopButton.disabled = true;
+            stopButton.classList.remove("btn-secondary");
+            stopButton.classList.add("btn-secondary-disabled");
             nextAlertEl.textContent = "-";
             countdownEl.textContent = "-";
           } else {
@@ -1175,13 +1333,17 @@
           isRunning = false;
           setStatus("finished", "Finished");
           startButton.disabled = false;
+          startButton.classList.remove("btn-primary-disabled");
+          startButton.classList.add("btn-primary");
           stopButton.disabled = true;
+          stopButton.classList.remove("btn-secondary");
+          stopButton.classList.add("btn-secondary-disabled");
         }
         return;
       }
 
       const nextTime = schedule[nextIndex];
-      nextAlertEl.textContent = nextTime.toLocaleTimeString();
+      nextAlertEl.textContent = schedule[nextIndex].toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 
       const diffMs = nextTime.getTime() - now.getTime();
 
@@ -1198,17 +1360,21 @@
             isRunning = false;
             setStatus("finished", "Finished");
             startButton.disabled = false;
+            startButton.classList.remove("btn-primary-disabled");
+            startButton.classList.add("btn-primary");
             stopButton.disabled = true;
+            stopButton.classList.remove("btn-secondary");
+            stopButton.classList.add("btn-secondary-disabled");
           }
         }
         return;
       }
 
-      // Regular countdown display
-      const remainingMinutes = Math.floor(diffMs / 60000);
-      const remainingSeconds = Math.floor((diffMs % 60000) / 1000);
-      countdownEl.textContent = `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
+        // Regular countdown display
+        const remainingMinutes = Math.floor(diffMs / 60000);
+        const remainingSeconds = Math.floor((diffMs % 60000) / 1000);
+        countdownEl.textContent = `${remainingMinutes} Min${remainingMinutes !== 1 ? "s" : ""} ${remainingSeconds.toString().padStart(2, '0')} Sec${remainingSeconds !== 1 ? "s" : ""}`;
+      }
 
     // final wiring: attach handlers and start the clock loop
     document.getElementById("configForm").addEventListener("submit", startSchedule);
